@@ -1,14 +1,14 @@
 <template>
   <div class="login-container">
-      <el-form ref="form" :model="user" class="login-form">
-  <el-form-item>
+      <el-form ref="login-form" :model="user" :rules="rules" class="login-form">
+  <el-form-item prop="mobile">
     <el-input v-model="user.mobile" placeholder="请输入手机号"></el-input>
   </el-form-item>
-  <el-form-item>
-    <el-input v-model="user.code" placeholder="请输入密码"></el-input>
+  <el-form-item prop="code">
+    <el-input v-model="user.code" placeholder="请输入验证码"></el-input>
   </el-form-item>
-  <el-form-item>
-    <el-checkbox v-model="checked">我已阅读并同意用户协议和隐私条款</el-checkbox>
+  <el-form-item prop="agree">
+    <el-checkbox v-model="user.agree">我已阅读并同意用户协议和隐私条款</el-checkbox>
   </el-form-item>
   <el-form-item>
     <el-button type="primary" @click="onlogin" style="width: 100%" :loading="loginLoding">登录</el-button>
@@ -18,8 +18,8 @@
 </template>
 
 <script>
-// 加载axios
-import request from '@/utils/request'
+// 加载请求模块
+import { login } from '@/api/user'
 export default {
   name: 'LoginIndex',
   components: {},
@@ -28,10 +28,32 @@ export default {
     return {
       user: {
         mobile: '',
-        code: ''
+        code: '',
+        agree: ''
       },
-      checked: false,
-      loginLoding: false
+      loginLoding: false,
+      rules: {
+        mobile: [
+          { pattern: /^1[3|5|7|8]\d{9}$/, message: '请输入正确的号码格式', trigger: 'change' },
+          { required: true, message: '请输入手机号', trigger: 'blur' }
+        ],
+        code: [
+          { required: true, message: '验证码不能为空', trigger: 'blur' },
+          { pattern: /^\d{6}$/, message: '请输入正确的验证码', trigger: 'change' }
+        ],
+        agree: [
+          {
+            validator: (rule, value, callback) => {
+              if (value) {
+                callback()
+              } else {
+                callback(new Error('请同意用户协议'))
+              }
+              console.log(value)
+            }
+          }
+        ]
+      }
     }
   },
   computed: {},
@@ -40,31 +62,29 @@ export default {
   mounted () {},
   methods: {
     onlogin () {
+      this.$refs['login-form'].validate(valid => {
+        // console.log(valid) valid是验证结果 false/true
+        if (!valid) {
+          return
+        }
+        this.login()
+      })
+    },
+    login () {
       // 获取表单数据（根据接口要求绑定数据）
-      const user = this.user
+      // const user = this.user
       this.loginLoding = true
-      // 表单验证
-
-      // 验证通过，提交登录
-      request({
-        method: 'POST',
-        url: '/mp/v1_0/authorizations',
-        // data 用来设置 POST 请求体
-        data: user
-      }).then(res => {
-        console.log(res)
-
-        // 登录成功
+      login(this.user).then(res => {
         this.$message({
           message: '登录成功',
           type: 'success'
         })
-        this.loginLoding = true
-      }).catch(err => { // 登录失败
-        console.log('登录失败', err)
-        this.$message.error('登录失败，手机号或验证码错误')
+        this.loginLoding = false
+      }).catch(err => {
+        console.log(err)
+        this.$message.error('登录失败')
+        this.loginLoding = false
       })
-      this.loginLoding = true
     }
   }
 }
