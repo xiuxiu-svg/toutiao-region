@@ -8,6 +8,7 @@ const request = axios.create({
 request.interceptors.request.use(function (config) {
   // 把本地的token取出来放到请求头
   const user = JSON.parse(window.localStorage.getItem('user'))
+  // console.log(user)
   // 写死的token 应该动态获取
   // Authorization: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MTg5MDkxMjYsInVzZX
   config.headers.Authorization = `Bearer ${user.token}`

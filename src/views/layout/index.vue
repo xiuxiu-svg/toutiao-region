@@ -27,7 +27,7 @@
               <span>{{user.name}}</span>
               <i class="el-icon-arrow-down el-icon--right"></i>
             </div>
-            <el-dropdown-menu slot="dropdown">
+            <el-dropdown-menu slot="dropdown" @click="abc()">
               <el-dropdown-item>设置</el-dropdown-item>
               <el-dropdown-item>退出</el-dropdown-item>
             </el-dropdown-menu>
@@ -60,9 +60,12 @@ export default {
   methods: {
     loadUserProfile () {
       getUserProfile().then(res => {
-        console.log(res)
+        // console.log(res)
         this.user = res.data.data
       })
+    },
+    abc () {
+      console('1')
     }
   },
   created () {

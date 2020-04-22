@@ -19,7 +19,7 @@
 
 <script>
 // 加载请求模块
-import { login } from '@/api/user'
+import { loginTo } from '@/api/user'
 export default {
   name: 'LoginIndex',
   components: {},
@@ -76,7 +76,7 @@ export default {
       // 获取表单数据（根据接口要求绑定数据）
       // const user = this.user
       this.loginLoding = true
-      login(this.user).then(res => {
+      loginTo(this.user).then(res => {
         // 简单的提示信息
         this.$message({
           message: '登录成功',
@@ -85,6 +85,7 @@ export default {
         // 恢复登录按钮的点击状态
         this.loginLoding = false
         // 登陆成功获取token令牌
+        // console.log(res)
         window.localStorage.setItem('user', JSON.stringify(res.data.data))
         // 跳转到首页
         this.$router.push(
