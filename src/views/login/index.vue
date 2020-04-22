@@ -62,11 +62,13 @@ export default {
   mounted () {},
   methods: {
     onlogin () {
+      // 强制表单校验
       this.$refs['login-form'].validate(valid => {
         // console.log(valid) valid是验证结果 false/true
         if (!valid) {
           return
         }
+        // 校验通过 再调用请求函数
         this.login()
       })
     },
@@ -75,11 +77,16 @@ export default {
       // const user = this.user
       this.loginLoding = true
       login(this.user).then(res => {
+        // 简单的提示信息
         this.$message({
           message: '登录成功',
           type: 'success'
         })
+        // 恢复登录按钮的点击状态
         this.loginLoding = false
+        // 登陆成功获取token令牌
+        window.localStorage.setItem('user', JSON.stringify(res.data.data))
+        // 跳转到首页
         this.$router.push(
           {
             name: 'home'
