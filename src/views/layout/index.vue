@@ -65,8 +65,19 @@ export default {
       })
     },
     onLogout () {
-      this.$router.push('/login')
-      window.localStorage.removeItem('user')
+      this.$confirm('你舍得走吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '再陪你一会儿',
+        type: 'warning'
+      }).then(() => {
+        this.$router.push('/login')
+        window.localStorage.removeItem('user')
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '你选择了留下'
+        })
+      })
     }
   },
   created () {

@@ -3,6 +3,8 @@ import VueRouter from 'vue-router'
 import Login from '@/views/login'
 import Layout from '@/views/layout'
 import Home from '@/views/Home/home'
+// 引入文章管理组件
+import ArticleIndex from '@/views/article'
 Vue.use(VueRouter)
 
 const routes = [
@@ -22,6 +24,12 @@ const routes = [
         path: '',
         component: Home,
         name: 'home'
+      },
+      // 文章管理页面路由规则
+      {
+        path: '/article',
+        component: ArticleIndex,
+        name: 'ArticleIndex'
       }
     ]
   }
