@@ -1,7 +1,13 @@
 <template>
   <el-menu
     default-active="/"
-    class="el-menu-vertical-demo">
+    class="menu el-menu-vertical-demo"
+    background-color="rgb(126, 112, 119)"
+    text-color="#fff"
+    active-text-color="#ffd04b"
+    :collapse="isCollapse"
+    >
+    <!-- logo -->
     <div>
       <img src="./logo_index.png" alt="">
     </div>
@@ -38,7 +44,7 @@
 <script>
 export default {
   name: 'AppAside',
-  props: {},
+  props: ['is-collapse'],
   components: {},
   data () {
     return {}
@@ -52,7 +58,8 @@ export default {
 }
 </script>
 <style lang='less' scoped>
-.el-menu-vertical-demo {
+.menu {
+  height: 100%;
     img {
         width: 200px;
     }
