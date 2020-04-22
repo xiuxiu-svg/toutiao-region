@@ -27,7 +27,7 @@
               <span>{{user.name}}</span>
               <i class="el-icon-arrow-down el-icon--right"></i>
             </div>
-            <el-dropdown-menu slot="dropdown" @click="abc()">
+            <el-dropdown-menu slot="dropdown" @click.native="onLogout()">
               <el-dropdown-item>设置</el-dropdown-item>
               <el-dropdown-item>退出</el-dropdown-item>
             </el-dropdown-menu>
@@ -64,8 +64,9 @@ export default {
         this.user = res.data.data
       })
     },
-    abc () {
-      console('1')
+    onLogout () {
+      this.$router.push('/login')
+      window.localStorage.removeItem('user')
     }
   },
   created () {

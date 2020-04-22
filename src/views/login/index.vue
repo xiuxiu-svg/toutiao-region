@@ -49,7 +49,7 @@ export default {
               } else {
                 callback(new Error('请同意用户协议'))
               }
-              console.log(value)
+              // console.log(value)
             }
           }
         ]
@@ -85,7 +85,7 @@ export default {
         // 恢复登录按钮的点击状态
         this.loginLoding = false
         // 登陆成功获取token令牌
-        // console.log(res)
+        // console.log(1)
         window.localStorage.setItem('user', JSON.stringify(res.data.data))
         // 跳转到首页
         this.$router.push(

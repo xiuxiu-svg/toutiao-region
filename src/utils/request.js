@@ -11,7 +11,9 @@ request.interceptors.request.use(function (config) {
   // console.log(user)
   // 写死的token 应该动态获取
   // Authorization: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MTg5MDkxMjYsInVzZX
-  config.headers.Authorization = `Bearer ${user.token}`
+  if (user) {
+    config.headers.Authorization = `Bearer ${user.token}`
+  }
   return config
 }, function (error) {
   // Do something with request error
