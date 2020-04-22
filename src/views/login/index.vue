@@ -27,8 +27,8 @@ export default {
   data () {
     return {
       user: {
-        mobile: '',
-        code: '',
+        mobile: '13911111111',
+        code: '246810',
         agree: ''
       },
       loginLoding: false,
@@ -80,6 +80,11 @@ export default {
           type: 'success'
         })
         this.loginLoding = false
+        this.$router.push(
+          {
+            name: 'home'
+          }
+        )
       }).catch(err => {
         console.log(err)
         this.$message.error('登录失败')
