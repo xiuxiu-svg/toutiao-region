@@ -5,7 +5,7 @@
       width="auto">
       <app-aside
       :is-collapse="isCollapse"
-      ></app-aside>
+      />
     </el-aside>
     <el-container>
       <el-header
@@ -27,9 +27,9 @@
               <span>{{user.name}}</span>
               <i class="el-icon-arrow-down el-icon--right"></i>
             </div>
-            <el-dropdown-menu slot="dropdown" @click.native="onLogout()">
+            <el-dropdown-menu slot="dropdown">
               <el-dropdown-item>设置</el-dropdown-item>
-              <el-dropdown-item>退出</el-dropdown-item>
+              <el-dropdown-item @click.native="onLogout()">退出</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>

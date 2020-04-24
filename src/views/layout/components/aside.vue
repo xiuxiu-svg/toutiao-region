@@ -9,7 +9,7 @@
     >
     <!-- logo -->
     <div>
-      <img src="./logo_index.png" alt="">
+      <img src="./logo_admin.png" alt="" class="logoAdmin">
     </div>
     <el-menu-item index="/">
       <i class="el-icon-s-home"></i>
@@ -60,8 +60,10 @@ export default {
 <style lang='less' scoped>
 .menu {
   height: 100%;
-    img {
-        width: 200px;
+    .logoAdmin {
+      margin: 15px ;
+      // margin-left: 15px ;
+      width: 150px;
     }
     .iconfont {
         margin: 0 10px 0 5px;

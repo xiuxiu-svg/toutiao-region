@@ -10,9 +10,9 @@
       </el-breadcrumb>
     </div>
     <div>
-        <el-form ref="form" :model="form" label-width="80px">
+        <el-form ref="form" :model="form" label-width="80px" size="small">
           <!-- 状态 -->
-          <el-form-item label="状态:">
+          <el-form-item label="状态 :">
             <el-radio-group v-model="form.resource">
               <el-radio label="全部"></el-radio>
               <el-radio label="草稿"></el-radio>
@@ -23,7 +23,7 @@
             </el-radio-group>
           </el-form-item>
           <!-- 频道 -->
-          <el-form-item label="频道:">
+          <el-form-item label="频道 :">
             <el-select v-model="form.region" placeholder="请选择">
               <el-option label="开发者资讯" value="1"></el-option>
               <el-option label="ios" value="2"></el-option>
@@ -35,7 +35,7 @@
             </el-select>
           </el-form-item>
           <!-- 日期 -->
-          <el-form-item label="日期:">
+          <el-form-item label="日期 :">
             <el-date-picker
               v-model="form.date1"
               type="datetimerange"
@@ -53,7 +53,7 @@
 <!-- 查询结果 -->
 <el-card class="box-card">
   <div slot="header" class="clearfix">
-  <span>根据筛选条件共查询到 46147 条结果：</span>
+  <span>根据筛选条件共查询到 <span>{{total_count}}</span> 条结果：</span>
   </div>
   <!-- 表格 -->
   <el-table
@@ -71,14 +71,14 @@
         width="180">
       </el-table-column>
       <el-table-column
-
         label="状态">
+        <!-- 自定义列状态 -->
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.status === 0">草稿</el-tag>
-          <el-tag v-else-if="scope.row.status === 2" type="success">审核通过</el-tag>
+          <el-tag :type="articleStatus[scope.row.status].type">{{ articleStatus[scope.row.status].text }}</el-tag>
+          <!-- <el-tag v-else-if="scope.row.status === 2" type="success">审核通过</el-tag>
           <el-tag v-else-if="scope.row.status === 1" type="info">待审核</el-tag>
           <el-tag v-else-if="scope.row.status === 3" type="warning">审核失败</el-tag>
-          <el-tag v-else-if="scope.row.status === 4" type="danger">已删除</el-tag>
+          <el-tag v-else-if="scope.row.status === 4" type="danger">已删除</el-tag> -->
         </template>
       </el-table-column>
       <el-table-column
@@ -97,7 +97,8 @@
   <el-pagination
   background
   layout="prev, pager, next"
-  :total="1000">
+  @current-change="onPageChange"
+  :total="total_count">
   </el-pagination>
 </el-card>
 </div>
@@ -118,13 +119,24 @@ export default {
         date2: '',
         delivery: false,
         type: [],
-        resource: '',
+        resource: '全部',
         desc: ''
       },
-      articles: []
+      articles: [],
+      articleStatus: [
+        { status: 0, text: '草稿', type: 'info' },
+        { status: 1, text: '待审核', type: '' },
+        { status: 2, text: '审核通过', type: 'success' },
+        { status: 3, text: '审核失败', type: 'warning' },
+        { status: 4, text: '已删除', type: 'danger' }
+      ],
+      total_count: '',
+      // page: {
+      //   page: 'current-page'
+      // }
+      page: ''
     }
   },
-
   computed: {},
   watch: {},
   methods: {
@@ -135,7 +147,11 @@ export default {
       getArticles().then(res => {
         console.log(res)
         this.articles = res.data.data.results
+        this.total_count = res.data.data.total_count
       })
+    },
+    onPageChange () {
+      this.loadArticles()
     }
   },
   created () {
