@@ -53,7 +53,7 @@
 <!-- 查询结果 -->
 <el-card class="box-card">
   <div slot="header" class="clearfix">
-  <span>根据筛选条件共查询到 <span>{{total_count}}</span> 条结果：</span>
+  <span>根据筛选条件共查询到 <span>{{ totalCount }}</span> 条结果：</span>
   </div>
   <!-- 表格 -->
   <el-table
@@ -61,9 +61,14 @@
     stripe
     style="width: 100%">
       <el-table-column
-        prop="date"
+        prop=""
         label="封面"
         width="180">
+        <template slot-scope="scope">
+          <!-- 后台返回了图片就显示第一张 没有显示暂无图片 -->
+          <img v-if="scope.row.cover.images[0]" class="coverImage" :src="scope.row.cover.images[0]" alt="">
+          <img v-else class="coverImage" src="./error.3f7b1f94.gif" alt="">
+        </template>
       </el-table-column>
       <el-table-column
         prop="title"
@@ -74,6 +79,7 @@
         label="状态">
         <!-- 自定义列状态 -->
         <template slot-scope="scope">
+          <!-- 在data中声明type、文本  -->
           <el-tag :type="articleStatus[scope.row.status].type">{{ articleStatus[scope.row.status].text }}</el-tag>
           <!-- <el-tag v-else-if="scope.row.status === 2" type="success">审核通过</el-tag>
           <el-tag v-else-if="scope.row.status === 1" type="info">待审核</el-tag>
@@ -98,7 +104,7 @@
   background
   layout="prev, pager, next"
   @current-change="onPageChange"
-  :total="total_count">
+  :total="totalCount">
   </el-pagination>
 </el-card>
 </div>
@@ -130,7 +136,7 @@ export default {
         { status: 3, text: '审核失败', type: 'warning' },
         { status: 4, text: '已删除', type: 'danger' }
       ],
-      total_count: '',
+      totalCount: 0,
       // page: {
       //   page: 'current-page'
       // }
@@ -146,8 +152,10 @@ export default {
     loadArticles () {
       getArticles().then(res => {
         console.log(res)
-        this.articles = res.data.data.results
-        this.total_count = res.data.data.total_count
+        // 解构res.data.data=[page: 1, per_page: 10, results: [], total_count: 118684 ...]
+        const { results, total_count: totalCount } = res.data.data
+        this.articles = results
+        this.totalCount = totalCount
       })
     },
     onPageChange () {
@@ -168,5 +176,9 @@ export default {
 }
 .item {
   margin-bottom: 10px;
+}
+.coverImage {
+  width: 100px;
+  background-size: cover;
 }
 </style>
