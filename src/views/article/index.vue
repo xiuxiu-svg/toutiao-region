@@ -73,7 +73,12 @@
             <el-image
               style="width: 100px; height: 100px"
               :src="scope.row.cover.images[0]"
-              :fit="fits[2]"></el-image>
+              :fit="fits[2]"
+              lazy>
+              <div slot="placeholder" class="image-slot">
+                加载中<span class="dot">...</span>
+              </div>
+              </el-image>
         </template>
       </el-table-column>
       <el-table-column
@@ -106,11 +111,13 @@
         <el-button type="danger" icon="el-icon-delete" circle></el-button>
       </el-table-column>
   </el-table>
+  <!-- 分页 -->
   <el-pagination
-  background
-  layout="prev, pager, next"
-  @current-change="onPageChange"
-  :total="totalCount">
+    background
+    layout="prev, pager, next"
+    @current-change="onPageChange"
+    :current-page="page"
+    :total="totalCount">
   </el-pagination>
 </el-card>
 </div>
@@ -147,8 +154,8 @@ export default {
       // page: {
       //   page: 'current-page'
       // }
-      page: '',
-      totalCount: 0
+      totalCount: 0,
+      page: 1// 声明页码
     }
   },
   computed: {},
@@ -157,8 +164,12 @@ export default {
     onSubmit () {
       console.log('submit!')
     },
-    loadArticles () {
-      getArticles().then(res => {
+    // 加载页面时不传page 默认page=1
+    loadArticles (page = 1) {
+      getArticles({
+        // page（形参）： page（用户传入的页码）
+        page
+      }).then(res => {
         console.log(res)
         // 解构res.data.data=[page: 1, per_page: 10, results: [], total_count: 118684 ...]
         const { results, total_count: totalCount } = res.data.data
@@ -166,13 +177,13 @@ export default {
         this.totalCount = totalCount
       })
     },
-    onPageChange () {
-      this.loadArticles()
+    onPageChange (page) {
+      this.loadArticles(page)
     }
   },
   created () {
     // 请求所有图书
-    this.loadArticles()
+    this.loadArticles(1)
   },
   mounted () {},
   beforeDestroy () {}
