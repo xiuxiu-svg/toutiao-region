@@ -66,8 +66,14 @@
         width="180">
         <template slot-scope="scope">
           <!-- 后台返回了图片就显示第一张 没有显示暂无图片 -->
-          <img v-if="scope.row.cover.images[0]" class="coverImage" :src="scope.row.cover.images[0]" alt="">
-          <img v-else class="coverImage" src="./error.3f7b1f94.gif" alt="">
+          <!-- <img v-if="scope.row.cover.images[0]" class="coverImage" :src="scope.row.cover.images[0]" alt="">
+          <img v-else class="coverImage" src="./error.3f7b1f94.gif" alt=""> -->
+
+          <!-- 使用express图片组件 懒加载，占位功能 -->
+            <el-image
+              style="width: 100px; height: 100px"
+              :src="scope.row.cover.images[0]"
+              :fit="fits[2]"></el-image>
         </template>
       </el-table-column>
       <el-table-column
@@ -136,11 +142,13 @@ export default {
         { status: 3, text: '审核失败', type: 'warning' },
         { status: 4, text: '已删除', type: 'danger' }
       ],
-      totalCount: 0,
+      fits: ['fill', 'contain', 'cover', 'none', 'scale-down'],
+      url: '',
       // page: {
       //   page: 'current-page'
       // }
-      page: ''
+      page: '',
+      totalCount: 0
     }
   },
   computed: {},
