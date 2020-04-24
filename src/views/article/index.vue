@@ -40,12 +40,13 @@
           <!-- 日期 -->
           <el-form-item label="日期 :">
             <el-date-picker
-              v-model="form.date1"
+              v-model="pubdate"
               type="datetimerange"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
               :default-time="['00:00:00', '23:59:59']"
-              format="yyyy-MM-dd">
+              format="yyyy-MM-dd"
+              value-format="yyyy-MM-dd">
             </el-date-picker>
           </el-form-item>
           <el-form-item>
@@ -162,8 +163,9 @@ export default {
       perPage: 15,
       totalCount: 0,
       page: 1, // 声明页码
-      channels: [],
-      channelId: null
+      channels: [], // 频道列表
+      channelId: null, // 频道索引
+      pubdate: null // 时间间隔
     }
   },
   computed: {},
@@ -179,7 +181,9 @@ export default {
         page,
         per_page: this.perPage,
         status: this.form.resource,
-        channel_id: this.channelId
+        channel_id: this.channelId,
+        begin_pubdate: this.pubdate ? this.pubdate[0] : null,
+        end_pubdate: this.pubdate ? this.pubdate[1] : null
       }).then(res => {
         console.log(res)
         // 解构res.data.data=[page: 1, per_page: 10, results: [], total_count: 118684 ...]
