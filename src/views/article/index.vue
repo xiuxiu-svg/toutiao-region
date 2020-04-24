@@ -10,7 +10,11 @@
       </el-breadcrumb>
     </div>
     <div>
-        <el-form ref="form" :model="form" label-width="80px" size="small">
+        <el-form ref="form"
+          :model="form"
+          label-width="80px"
+          size="small"
+          >
           <!-- 状态 -->
           <el-form-item label="状态 :">
             <el-radio-group v-model="form.resource">
@@ -50,7 +54,9 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-button type="info" @click="loadArticles(1)">筛选</el-button>
+            <el-button type="info"
+              @click="loadArticles(1)"
+              :disabled="loading">筛选</el-button>
           </el-form-item>
         </el-form>
     </div>
@@ -62,6 +68,8 @@
   </div>
   <!-- 表格 -->
   <el-table
+    v-loading="loading"
+    element-loading-text="拼命加载中"
     :data="articles"
     stripe
     style="width: 100%">
@@ -123,7 +131,8 @@
     @current-change="onPageChange"
     :page-size="perPage"
     :current-page="page"
-    :total="totalCount">
+    :total="totalCount"
+    :disabled="loading">
   </el-pagination>
 </el-card>
 </div>
@@ -165,7 +174,8 @@ export default {
       page: 1, // 声明页码
       channels: [], // 频道列表
       channelId: null, // 频道索引
-      pubdate: null // 时间间隔
+      pubdate: null, // 时间间隔
+      loading: true
     }
   },
   computed: {},
@@ -176,6 +186,7 @@ export default {
     },
     // 加载页面时不传page 默认page=1
     loadArticles (page = 1) {
+      this.loading = true
       getArticles({
         // page（形参）： page（用户传入的页码）
         page,
@@ -190,9 +201,11 @@ export default {
         const { results, total_count: totalCount } = res.data.data
         this.articles = results
         this.totalCount = totalCount
+        this.loading = false
       })
     },
     onPageChange (page) {
+      this.loading = true
       this.loadArticles(page)
     },
     loadChannel () {
