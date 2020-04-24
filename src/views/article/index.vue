@@ -116,6 +116,7 @@
     background
     layout="prev, pager, next"
     @current-change="onPageChange"
+    :page-size="perPage"
     :current-page="page"
     :total="totalCount">
   </el-pagination>
@@ -151,9 +152,7 @@ export default {
       ],
       fits: ['fill', 'contain', 'cover', 'none', 'scale-down'],
       url: '',
-      // page: {
-      //   page: 'current-page'
-      // }
+      perPage: 15,
       totalCount: 0,
       page: 1// 声明页码
     }
@@ -168,7 +167,8 @@ export default {
     loadArticles (page = 1) {
       getArticles({
         // page（形参）： page（用户传入的页码）
-        page
+        page,
+        per_page: this.perPage
       }).then(res => {
         console.log(res)
         // 解构res.data.data=[page: 1, per_page: 10, results: [], total_count: 118684 ...]
