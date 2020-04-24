@@ -24,14 +24,17 @@
           </el-form-item>
           <!-- 频道 -->
           <el-form-item label="频道 :">
-            <el-select v-model="form.region" placeholder="请选择">
-              <el-option label="开发者资讯" value="1"></el-option>
-              <el-option label="ios" value="2"></el-option>
-              <el-option label="c++" value="3"></el-option>
-              <el-option label="Android" value="4"></el-option>
-              <el-option label="css" value="5"></el-option>
-              <el-option label="数据库" value="6"></el-option>
-              <el-option label="区块链" value="7"></el-option>
+            <el-select v-model="channelId" placeholder="请选择">
+              <el-option
+              label="全部"
+              :value="null"
+              ></el-option>
+              <el-option
+                :label="channel.name"
+                :value="channel.id"
+                v-for="(channel, index) in channels"
+                :key="index"
+                ></el-option>
             </el-select>
           </el-form-item>
           <!-- 日期 -->
@@ -124,7 +127,10 @@
 </div>
 </template>
 <script>
-import { getArticles } from '@/api/article'
+import {
+  getArticles,
+  getArticleChannel
+} from '@/api/article'
 
 export default {
   name: 'ArticleIndex',
@@ -154,7 +160,9 @@ export default {
       url: '',
       perPage: 15,
       totalCount: 0,
-      page: 1// 声明页码
+      page: 1, // 声明页码
+      channels: [],
+      channelId: null
     }
   },
   computed: {},
@@ -169,7 +177,8 @@ export default {
         // page（形参）： page（用户传入的页码）
         page,
         per_page: this.perPage,
-        status: this.form.resource
+        status: this.form.resource,
+        channel_id: this.channelId
       }).then(res => {
         console.log(res)
         // 解构res.data.data=[page: 1, per_page: 10, results: [], total_count: 118684 ...]
@@ -180,11 +189,19 @@ export default {
     },
     onPageChange (page) {
       this.loadArticles(page)
+    },
+    loadChannel () {
+      getArticleChannel()
+        .then(res => {
+          console.log(res)
+          this.channels = res.data.data.channels
+        })
     }
   },
   created () {
     // 请求所有图书
     this.loadArticles(1)
+    this.loadChannel()
   },
   mounted () {},
   beforeDestroy () {}
