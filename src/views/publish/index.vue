@@ -10,30 +10,30 @@
     </div>
     <div>
         <el-form ref="form"
-          :model="form"
+          :model="articles"
           label-width="80px"
           size="small"
           >
           <!-- 标题 -->
           <el-form-item label="标题">
-            <el-input v-model="form.name"></el-input>
+            <el-input v-model="articles.title"></el-input>
           </el-form-item>
           <!-- 内容 -->
           <el-form-item label="内容">
-            <el-input type="textarea" v-model="form.desc"></el-input>
+            <el-input type="textarea" v-model="articles.content"></el-input>
           </el-form-item>
           <!-- 封面 -->
           <el-form-item label="封面 :">
-            <el-radio-group v-model="form.resource">
-              <el-radio :label="null">单图</el-radio>
-              <el-radio :label="0">三图</el-radio>
-              <el-radio :label="1">无图</el-radio>
-              <el-radio :label="2">自动</el-radio>
+            <el-radio-group v-model="articles.cover.type">
+              <el-radio :label="1">单图</el-radio>
+              <el-radio :label="3">三图</el-radio>
+              <el-radio :label="0">无图</el-radio>
+              <el-radio :label="-1">自动</el-radio>
             </el-radio-group>
           </el-form-item>
           <!-- 选择频道 -->
           <el-form-item label="频道 :">
-            <el-select v-model="channelId" placeholder="请选择">
+            <el-select v-model="articles.channel_id" placeholder="请选择">
               <el-option
                 :label="channel.name"
                 :value="channel.id"
@@ -45,12 +45,12 @@
           <!-- 按钮 -->
           <el-form-item>
             <el-button type="info"
-              @click="loadArticles(1)"
-              :disabled="loading">发表
+              @click="onSubmit(false)"
+              >发表
             </el-button>
             <el-button type="info"
-              @click="loadArticles(1)"
-              :disabled="loading">存为草稿
+              @click="onSubmit(true)"
+              >存为草稿
             </el-button>
           </el-form-item>
         </el-form>
@@ -60,30 +60,85 @@
 </template>
 
 <script>
+import {
+  getArticleChannel,
+  addArticle,
+  getArticle,
+  updateArticle
+} from '@/api/article'
+
 export default {
   name: 'publishIndex',
   props: {},
   components: {},
   data () {
     return {
-      form: {
-        name: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
-      }
+      articles: {
+        title: '',
+        content: '',
+        cover: {
+          type: 0,
+          images: []
+        },
+        channel_id: ''
+      },
+      channels: []
+      // draft: false,
     }
   },
   computed: {},
   watch: {},
-  created () {},
+  created () {
+    // 组件创建后加载频道
+    this.loadChannel()
+    // 根据URL中是否带id区分发布跟编辑文章
+    if (this.$route.query.id) {
+      this.loadArticle()
+    }
+  },
   methods: {
-    onSubmit () {
-      console.log('submit!')
+    // 发布文章或存为草稿
+    onSubmit (draft = false) {
+      const articleId = this.$route.query.id
+      // URL有articleId就是修改文章
+      if (articleId) {
+        updateArticle(articleId, this.articles, draft)
+          .then(res => {
+            // console.log(res)
+            this.$router.push('/article')
+            this.$message({
+              type: 'succeess',
+              message: '操作成功'
+            })
+          })
+      } else {
+        addArticle(this.articles, draft)
+          .then(res => {
+            // console.log(res)
+            this.$router.push('/article')
+            this.$message({
+              type: 'succeess',
+              message: '操作成功'
+            })
+          })
+      }
+    },
+    // 请求频道
+    loadChannel () {
+      getArticleChannel()
+        .then(res => {
+          // console.log(res)
+          this.channels = res.data.data.channels
+        })
+    },
+    // 加载指定文章
+    loadArticle () {
+      const articleId = this.$route.query.id
+      getArticle(articleId)
+        .then(res => {
+          console.log(res)
+          this.articles = res.data.data
+        })
     }
   },
   mounted () {},

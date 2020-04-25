@@ -127,6 +127,7 @@
               circle
               icon="el-icon-edit"
               type="primary"
+              @click="onUpdateArticle(scope.row.id)"
             ></el-button>
             <el-button
               size="mini"
@@ -255,6 +256,10 @@ export default {
           message: '已取消删除'
         })
       })
+    },
+    onUpdateArticle (articleId) {
+      // 也可以在视图上写js表达式
+      this.$router.push(`/publish?id=${articleId}`)
     }
   },
   created () {

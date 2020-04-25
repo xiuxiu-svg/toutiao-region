@@ -8,7 +8,6 @@ const request = axios.create({
   transformResponse: [function (data) {
     // 不用axios默认的JSON.parse()
     try {
-      console.log(data)
       return JSONbig.parse(data)
     } catch (err) {
       console.log(err, '转换失败')
