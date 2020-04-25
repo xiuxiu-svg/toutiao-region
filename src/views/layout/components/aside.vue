@@ -6,7 +6,9 @@
     text-color="#fff"
     active-text-color="#ffd04b"
     :collapse="isCollapse"
+    router
     >
+    <!-- 上面的router是element提供的attribute -->
     <!-- logo -->
     <div>
       <img src="./logo_admin.png" alt="" class="logoAdmin">

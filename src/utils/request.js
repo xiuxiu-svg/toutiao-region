@@ -1,8 +1,20 @@
 import axios from 'axios'
+// 加载json-bigint处理大数字
+import JSONbig from 'json-bigint'
 // const req1 = axios.create()
 // req1.defaults.baseURL = 'http://ttapi.research.itcast.cn/'
 const request = axios.create({
-  baseURL: 'http://ttapi.research.itcast.cn/'
+  baseURL: 'http://ttapi.research.itcast.cn/',
+  transformResponse: [function (data) {
+    // 不用axios默认的JSON.parse()
+    try {
+      console.log(data)
+      return JSONbig.parse(data)
+    } catch (err) {
+      console.log(err, '转换失败')
+      return data
+    }
+  }]
 })
 
 request.interceptors.request.use(function (config) {

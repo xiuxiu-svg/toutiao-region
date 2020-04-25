@@ -119,9 +119,23 @@
       <el-table-column
         prop="name"
         label="操作"
-        width="180">
-        <el-button type="primary" icon="el-icon-edit" circle></el-button>
-        <el-button type="danger" icon="el-icon-delete" circle></el-button>
+        width="180"
+        >
+        <template slot-scope="scope">
+          <el-button
+              size="small"
+              circle
+              icon="el-icon-edit"
+              type="primary"
+            ></el-button>
+            <el-button
+              size="mini"
+              type="danger"
+              icon="el-icon-delete"
+              circle
+              @click="onDeleteArticle(scope.row.id)"
+            ></el-button>
+        </template>
       </el-table-column>
   </el-table>
   <!-- 分页 -->
@@ -140,7 +154,8 @@
 <script>
 import {
   getArticles,
-  getArticleChannel
+  getArticleChannel,
+  delArticle
 } from '@/api/article'
 
 export default {
@@ -176,6 +191,7 @@ export default {
       channelId: null, // 频道索引
       pubdate: null, // 时间间隔
       loading: true
+
     }
   },
   computed: {},
@@ -214,6 +230,31 @@ export default {
           console.log(res)
           this.channels = res.data.data.channels
         })
+    },
+    // 删除文章 先询问后请求接口
+    onDeleteArticle (articleId) {
+      console.log(articleId.toString())
+      this.$confirm('确定要删除这篇文章吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        delArticle(articleId.toString()).then(res => {
+          console.log(articleId)
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+          this.loadArticles(this.page)
+        }).catch(err => {
+          console.log(err)
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
     }
   },
   created () {

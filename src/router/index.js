@@ -3,6 +3,8 @@ import VueRouter from 'vue-router'
 import Login from '@/views/login'
 import Layout from '@/views/layout'
 import Home from '@/views/Home/home'
+// 引入发表文章组件
+import publishIndex from '@/views/publish'
 // 引入文章管理组件
 import ArticleIndex from '@/views/article'
 Vue.use(VueRouter)
@@ -30,6 +32,12 @@ const routes = [
         path: '/article',
         component: ArticleIndex,
         name: 'ArticleIndex'
+      },
+      // 文章发布页面路由规则
+      {
+        path: '/publish',
+        component: publishIndex,
+        name: 'publishIndex'
       }
     ]
   }
