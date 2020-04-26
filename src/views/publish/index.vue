@@ -16,11 +16,19 @@
           >
           <!-- 标题 -->
           <el-form-item label="标题">
-            <el-input v-model="articles.title"></el-input>
+            <el-input
+              v-model="articles.title"
+            ></el-input>
           </el-form-item>
-          <!-- 内容 -->
           <el-form-item label="内容">
-            <el-input type="textarea" v-model="articles.content"></el-input>
+            <el-tiptap
+              v-model="articles.content"
+              :extensions="extensions"
+              placeholder="内容区"
+              :width="700"
+              :height="400"
+            />
+            <!-- <el-input type="textarea" v-model="articles.content"></el-input> -->
           </el-form-item>
           <!-- 封面 -->
           <el-form-item label="封面 :">
@@ -66,11 +74,38 @@ import {
   getArticle,
   updateArticle
 } from '@/api/article'
-
+import { uploadImage } from '@/api/image.js'
+// import { ElementTiptap } from 'element-tiptap'
+import {
+  // necessary extensions
+  Doc,
+  Text,
+  Paragraph,
+  Heading,
+  Bold,
+  Underline,
+  Italic,
+  Strike,
+  ListItem,
+  BulletList,
+  OrderedList,
+  ElementTiptap,
+  Image,
+  CodeBlock,
+  Blockquote,
+  TodoItem,
+  TodoList,
+  HardBreak,
+  FormatClear
+} from 'element-tiptap'
+// import element-tiptap styles
+import 'element-tiptap/lib/index.css'
 export default {
   name: 'publishIndex',
   props: {},
-  components: {},
+  components: {
+    'el-tiptap': ElementTiptap
+  },
   data () {
     return {
       articles: {
@@ -82,8 +117,39 @@ export default {
         },
         channel_id: ''
       },
-      channels: []
+      channels: [],
       // draft: false,
+      extensions: [
+        new Doc(),
+        new Text(),
+        new Paragraph(),
+        new Heading({ level: 5 }),
+        new Bold({ bubble: true }), // render command-button in bubble menu.
+        new Image({
+          // 图片的上传方法，返回一个 Promise<url>
+          uploadRequest (file) {
+            console.log(file)
+            const fd = new FormData()
+            fd.append('image', file)
+            return uploadImage(fd).then(res => {
+              console.log(res)
+              return res.data.data.url
+            })
+          }
+        }),
+        new Underline(),
+        new Italic(),
+        new Strike(),
+        new ListItem(),
+        new BulletList(),
+        new OrderedList(),
+        new CodeBlock(),
+        new Blockquote(),
+        new TodoItem(),
+        new TodoList(),
+        new HardBreak(),
+        new FormatClear()
+      ]
     }
   },
   computed: {},
@@ -136,7 +202,7 @@ export default {
       const articleId = this.$route.query.id
       getArticle(articleId)
         .then(res => {
-          console.log(res)
+          // console.log(res)
           this.articles = res.data.data
         })
     }

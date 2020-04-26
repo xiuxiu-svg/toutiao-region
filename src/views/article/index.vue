@@ -123,19 +123,19 @@
         >
         <template slot-scope="scope">
           <el-button
-              size="small"
-              circle
-              icon="el-icon-edit"
-              type="primary"
-              @click="onUpdateArticle(scope.row.id)"
-            ></el-button>
-            <el-button
-              size="mini"
-              type="danger"
-              icon="el-icon-delete"
-              circle
-              @click="onDeleteArticle(scope.row.id)"
-            ></el-button>
+            size="small"
+            circle
+            icon="el-icon-edit"
+            type="primary"
+            @click="onUpdateArticle(scope.row.id)">
+          </el-button>
+          <el-button
+            size="mini"
+            type="danger"
+            icon="el-icon-delete"
+            circle
+            @click="onDeleteArticle(scope.row.id)">
+          </el-button>
         </template>
       </el-table-column>
   </el-table>
@@ -213,7 +213,7 @@ export default {
         begin_pubdate: this.pubdate ? this.pubdate[0] : null,
         end_pubdate: this.pubdate ? this.pubdate[1] : null
       }).then(res => {
-        console.log(res)
+        // console.log(res)
         // 解构res.data.data=[page: 1, per_page: 10, results: [], total_count: 118684 ...]
         const { results, total_count: totalCount } = res.data.data
         this.articles = results
@@ -228,34 +228,37 @@ export default {
     loadChannel () {
       getArticleChannel()
         .then(res => {
-          console.log(res)
+          // console.log(res)
           this.channels = res.data.data.channels
         })
     },
     // 删除文章 先询问后请求接口
     onDeleteArticle (articleId) {
       console.log(articleId.toString())
+      console.log(articleId)
       this.$confirm('确定要删除这篇文章吗?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(() => {
-        delArticle(articleId.toString()).then(res => {
-          console.log(articleId)
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          })
-          this.loadArticles(this.page)
-        }).catch(err => {
-          console.log(err)
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        })
       })
+        .then(() => {
+          delArticle(articleId).then(res => {
+            console.log(articleId)
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+            this.loadArticles(this.page)
+          })
+            .catch(err => {
+              console.log(err)
+            })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     },
     onUpdateArticle (articleId) {
       // 也可以在视图上写js表达式
