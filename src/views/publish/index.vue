@@ -9,18 +9,26 @@
       </el-breadcrumb>
     </div>
     <div>
-        <el-form ref="form"
+        <el-form
           :model="articles"
+          :rules="rules"
           label-width="80px"
           size="small"
+          ref="publish-form"
           >
           <!-- 标题 -->
-          <el-form-item label="标题">
+          <el-form-item
+          label="标题"
+          prop="title"
+          >
             <el-input
               v-model="articles.title"
             ></el-input>
           </el-form-item>
-          <el-form-item label="内容">
+          <el-form-item
+            label="内容"
+            prop="content"
+          >
             <el-tiptap
               v-model="articles.content"
               :extensions="extensions"
@@ -40,7 +48,7 @@
             </el-radio-group>
           </el-form-item>
           <!-- 选择频道 -->
-          <el-form-item label="频道 :">
+          <el-form-item label="频道 :" prop="channel_id">
             <el-select v-model="articles.channel_id" placeholder="请选择">
               <el-option
                 :label="channel.name"
@@ -109,7 +117,7 @@ export default {
   data () {
     return {
       articles: {
-        title: '',
+        title: '表单验证1',
         content: '',
         cover: {
           type: 0,
@@ -149,7 +157,29 @@ export default {
         new TodoList(),
         new HardBreak(),
         new FormatClear()
-      ]
+      ],
+      rules: {
+        title: [
+          { required: true, message: '请输入标题名称', trigger: 'blur' },
+          { min: 5, message: '最少输入5个字符', trigger: 'blur' }
+        ],
+        content: [
+          {
+            validator (rule, value, callback) {
+              // console.log('con/tent validator')
+              if (value === '<p></p>') {
+                callback(new Error('内容不能为空'))
+              } else {
+                callback()
+              }
+            }
+          },
+          { required: true, message: '请输入文章内容', trigger: 'blur' }
+        ],
+        channel_id: [
+          { required: true, message: '请选择文章频道' }
+        ]
+      }
     }
   },
   computed: {},
@@ -165,29 +195,36 @@ export default {
   methods: {
     // 发布文章或存为草稿
     onSubmit (draft = false) {
-      const articleId = this.$route.query.id
-      // URL有articleId就是修改文章
-      if (articleId) {
-        updateArticle(articleId, this.articles, draft)
-          .then(res => {
-            // console.log(res)
-            this.$router.push('/article')
-            this.$message({
-              type: 'succeess',
-              message: '操作成功'
+      // 发请求前先校验内容
+      this.$refs['publish-form'].validate(valid => {
+        if (!valid) {
+          return
+        }
+        // valid为true再进行下一步操作
+        const articleId = this.$route.query.id
+        // URL有articleId就是修改文章
+        if (articleId) {
+          updateArticle(articleId, this.articles, draft)
+            .then(res => {
+              // console.log(res)
+              this.$router.push('/article')
+              this.$message({
+                type: 'succeess',
+                message: '操作成功'
+              })
             })
-          })
-      } else {
-        addArticle(this.articles, draft)
-          .then(res => {
-            // console.log(res)
-            this.$router.push('/article')
-            this.$message({
-              type: 'succeess',
-              message: '操作成功'
+        } else {
+          addArticle(this.articles, draft)
+            .then(res => {
+              // console.log(res)
+              this.$router.push('/article')
+              this.$message({
+                type: 'succeess',
+                message: '操作成功'
+              })
             })
-          })
-      }
+        }
+      })
     },
     // 请求频道
     loadChannel () {
