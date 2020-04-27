@@ -3,10 +3,13 @@ import VueRouter from 'vue-router'
 import Login from '@/views/login'
 import Layout from '@/views/layout'
 import Home from '@/views/Home/home'
+
 // 引入发表文章组件
 import publishIndex from '@/views/publish'
 // 引入文章管理组件
 import ArticleIndex from '@/views/article'
+// 引入用户素材组件
+import imageIndex from '@/views/image'
 Vue.use(VueRouter)
 
 const routes = [
@@ -38,6 +41,11 @@ const routes = [
         path: '/publish',
         component: publishIndex,
         name: 'publishIndex'
+      },
+      {
+        path: '/image',
+        component: imageIndex,
+        name: 'imageIndex'
       }
     ]
   }
