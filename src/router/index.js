@@ -12,6 +12,8 @@ import ArticleIndex from '@/views/article'
 import imageIndex from '@/views/image'
 //  引入评论组件
 import commentIndex from '@/views/comment'
+// 引入账户组件
+import accountIndex from '@/views/account'
 Vue.use(VueRouter)
 
 const routes = [
@@ -53,6 +55,11 @@ const routes = [
         path: '/comment',
         component: commentIndex,
         name: 'commentIndex'
+      },
+      {
+        path: '/profile',
+        component: accountIndex,
+        name: 'accountIndex'
       }
     ]
   }
