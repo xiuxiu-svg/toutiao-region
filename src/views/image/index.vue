@@ -10,7 +10,7 @@
     </div>
     <div class="btn">
       <!-- 全部--收藏 -->
-        <el-radio-group v-model="collect" size="small" @change="onCollectChange">
+        <el-radio-group v-model="collect" size="small" @change="loadImages(1)">
           <el-radio-button :label="false">全部</el-radio-button>
           <el-radio-button :label="true">收藏</el-radio-button>
         </el-radio-group>
@@ -39,7 +39,7 @@
       background
       layout="prev, pager, next"
       :page-size="perPage"
-      :current-page="page"
+      :current-page.sync="page"
       :total="totalCount"
       @current-change="onPageChange"
       >
@@ -50,6 +50,7 @@
       title="提示"
       :visible.sync="dialogVisible"
       width="30%"
+      append-to-body="true"
       >
       <el-upload
         class="upload-demo"
@@ -82,7 +83,7 @@ export default {
       collect: false,
       results: [],
       page: 1,
-      perPage: 12,
+      perPage: 5,
       totalCount: 0,
       headers: {
         Authorization: `Bearer ${user.token}`
@@ -92,12 +93,13 @@ export default {
   computed: {},
   watch: {},
   created () {
-    this.loadImages(false)
+    this.loadImages(1)
   },
   methods: {
-    loadImages (collect = false, page) {
+    loadImages (page = 1) {
+      this.page = page // 如果形参有默认值，要放到最后
       getImages({
-        collect,
+        collect: this.collect,
         page,
         per_page: this.perPage
       }).then(res => {
@@ -107,27 +109,17 @@ export default {
         this.totalCount = totalCount
       })
     },
-    onCollectChange (collect) {
-      this.loadImages(collect)
-    },
+    // onCollectChange (collect) {
+    //   this.loadImages(collect)
+    // },
     // 当页码改变时实现全部数据分页
     onPageChange (page) {
-      // console.log(page)
-      getImages({
-        collect: false,
-        page,
-        per_page: this.perPage
-      }).then(res => {
-        // console.log(res)
-        const { results, total_count: totalCount } = res.data.data
-        this.results = results
-        this.totalCount = totalCount
-      })
+      this.loadImages(page)
     },
     onUploadSuccess () {
       // console.log(1)
       this.dialogVisible = false
-      this.loadImages(false)
+      this.loadImages()
     }
   },
   mounted () {},
