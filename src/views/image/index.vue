@@ -44,7 +44,7 @@
             size="mini"
             @click="onCollectImage(image)"
             ></el-button>
-            <el-button :loading="true" type="danger" icon="el-icon-delete" circle size="mini"></el-button>
+            <el-button @click="onDelImage(image)" type="danger" icon="el-icon-delete" circle size="mini"></el-button>
           </div>
       </el-col>
     </el-row>
@@ -86,7 +86,8 @@
 <script>
 import {
   getImages,
-  collectImage
+  collectImage,
+  delImage
 } from '@/api/image.js'
 export default {
   name: 'imageIndex',
@@ -120,7 +121,7 @@ export default {
         page,
         per_page: this.perPage
       }).then(res => {
-        console.log(res)
+        // console.log(res)
         const { results, total_count: totalCount } = res.data.data
         // 遍历results 给每张图片素材添加自定义属性loading
         // 先遍历再传递
@@ -141,15 +142,17 @@ export default {
       this.loadImages()
     },
     onCollectImage (image) {
-      const imageId = image.id
-      const collect = this.collect
-      this.loading = true
-      // 点击收藏后改变css样式
-      image.is_collected = !image.is_collected
-      collectImage(imageId, collect).then(res => {
-        console.log(res)
-        this.collect = res.data.data.collect
-        this.loading = false
+      image.loading = true
+      collectImage(image.id, !image.is_collected).then(res => {
+        // 点击收藏后改变css样式
+        image.is_collected = !image.is_collected
+        image.loading = false
+      })
+    },
+    onDelImage (image) {
+      delImage(image.id).then(res => {
+        image.loading = true
+        this.loadImages()
       })
     }
   },
