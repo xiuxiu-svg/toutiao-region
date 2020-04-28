@@ -10,6 +10,8 @@ import publishIndex from '@/views/publish'
 import ArticleIndex from '@/views/article'
 // 引入用户素材组件
 import imageIndex from '@/views/image'
+//  引入评论组件
+import commentIndex from '@/views/comment'
 Vue.use(VueRouter)
 
 const routes = [
@@ -46,6 +48,11 @@ const routes = [
         path: '/image',
         component: imageIndex,
         name: 'imageIndex'
+      },
+      {
+        path: '/comment',
+        component: commentIndex,
+        name: 'commentIndex'
       }
     ]
   }

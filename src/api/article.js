@@ -56,3 +56,24 @@ export const updateArticle = (articleId, data, draft = false) => {
     data
   })
 }
+// 获取评论列表
+export const getComments = (params) => {
+  return request({
+    method: 'GET',
+    url: '/mp/v1_0/articles',
+    params
+  })
+}
+// 更改评论状态
+export const changeStatus = (articleId, status) => {
+  return request({
+    method: 'PUT',
+    url: '/mp/v1_0/comments/status',
+    params: {
+      article_id: articleId
+    },
+    data: {
+      allow_comment: status
+    }
+  })
+}
