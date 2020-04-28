@@ -38,11 +38,13 @@
           <div class="img-action">
             <el-button
             type="warning"
-            icon="el-icon-star-off"
+            :icon="image.is_collected?'el-icon-star-on':'el-icon-star-off'"
+            :loading="image.loading"
             circle
             size="mini"
+            @click="onCollectImage(image)"
             ></el-button>
-            <el-button type="danger" icon="el-icon-delete" circle size="mini"></el-button>
+            <el-button :loading="true" type="danger" icon="el-icon-delete" circle size="mini"></el-button>
           </div>
       </el-col>
     </el-row>
@@ -82,7 +84,10 @@
 </template>
 
 <script>
-import { getImages } from '@/api/image.js'
+import {
+  getImages,
+  collectImage
+} from '@/api/image.js'
 export default {
   name: 'imageIndex',
   props: {},
@@ -117,13 +122,15 @@ export default {
       }).then(res => {
         console.log(res)
         const { results, total_count: totalCount } = res.data.data
+        // 遍历results 给每张图片素材添加自定义属性loading
+        // 先遍历再传递
+        results.forEach(image => {
+          image.loading = false
+        })
         this.results = results
         this.totalCount = totalCount
       })
     },
-    // onCollectChange (collect) {
-    //   this.loadImages(collect)
-    // },
     // 当页码改变时实现全部数据分页
     onPageChange (page) {
       this.loadImages(page)
@@ -132,6 +139,18 @@ export default {
       // console.log(1)
       this.dialogVisible = false
       this.loadImages()
+    },
+    onCollectImage (image) {
+      const imageId = image.id
+      const collect = this.collect
+      this.loading = true
+      // 点击收藏后改变css样式
+      image.is_collected = !image.is_collected
+      collectImage(imageId, collect).then(res => {
+        console.log(res)
+        this.collect = res.data.data.collect
+        this.loading = false
+      })
     }
   },
   mounted () {},
