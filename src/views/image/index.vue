@@ -19,6 +19,7 @@
         <el-button type="success" size="small" @click="dialogVisible = true">添加素材</el-button>
       </el-row>
     </div>
+    <!-- 响应式布局内容主体 -->
     <el-row :gutter="10">
       <el-col
         :xs="12"
@@ -26,12 +27,23 @@
         :md="6"
         :lg="4"
         v-for="(image, index) in results"
-        :key="index">
+        :key="index"
+        class="img-items">
           <el-image
             style="height: 100px"
             :src="image.url"
             fit="cover"
           ></el-image>
+          <!-- 图片收藏/取消收藏/删除 -->
+          <div class="img-action">
+            <el-button
+            type="warning"
+            icon="el-icon-star-off"
+            circle
+            size="mini"
+            ></el-button>
+            <el-button type="danger" icon="el-icon-delete" circle size="mini"></el-button>
+          </div>
       </el-col>
     </el-row>
     <!-- 分页 -->
@@ -50,7 +62,7 @@
       title="提示"
       :visible.sync="dialogVisible"
       width="30%"
-      append-to-body="true"
+      :append-to-body="true"
       >
       <el-upload
         class="upload-demo"
@@ -135,5 +147,19 @@ export default {
   display: flex;
   justify-content: space-between;
   margin-bottom: 20px;
+}
+.img-action {
+  width: 100%;
+  height: 35px;
+  position: absolute;
+  padding-bottom: 5px;
+  bottom: 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: rgba(253, 251, 251, 0.5)
+}
+.img-items {
+  position: relative;
 }
 </style>
