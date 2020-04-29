@@ -23,7 +23,7 @@
           </div>
           <el-dropdown>
             <div class="avatar-wrap">
-              <img :src="user.photo" alt="" class="avatar">
+              <img :src="user.photo" class="avatar">
               <span>{{user.name}}</span>
               <i class="el-icon-arrow-down el-icon--right"></i>
             </div>
@@ -43,15 +43,19 @@
 <script>
 import AppAside from './components/aside'
 import { getUserProfile } from '@/api/user'
+import globalBus from '@/utils/global-bus'
 export default {
-  name: '',
+  name: 'layoutIndex',
   props: {},
   components: {
     AppAside
   },
   data () {
     return {
-      user: {},
+      user: {
+        photo: '',
+        name: ''
+      },
       isCollapse: false
     }
   },
@@ -82,6 +86,11 @@ export default {
   },
   created () {
     this.loadUserProfile()
+    globalBus.$on('user-setting', (data) => {
+      this.user.name = data.name
+      console.log(data.photo, 1)
+      this.user.photo = data.photo
+    })
   },
   mounted () {},
   beforeDestroy () {}

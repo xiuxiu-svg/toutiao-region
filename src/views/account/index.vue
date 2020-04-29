@@ -76,6 +76,7 @@
 import { getUserProfile, changeUserAvatar, userSubmit } from '@/api/user'
 import 'cropperjs/dist/cropper.css'
 import Cropper from 'cropperjs'
+import globalBus from '@/utils/global-bus'
 export default {
   name: 'accountIndex',
   props: {},
@@ -173,6 +174,7 @@ export default {
         changeUserAvatar(formData).then(res => {
           console.log(res)
           this.dialogVisible = false
+          globalBus.$emit('user-setting', this.user)
           this.onLoadUser()
         })
       })
@@ -186,6 +188,7 @@ export default {
       }).then(res => {
         console.log(res)
         this.loading = false
+        globalBus.$emit('user-setting', this.user)
       })
     }
   },
