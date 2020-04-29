@@ -46,27 +46,37 @@
 
     </div>
 </el-card>
+<!-- 图片裁切 -->
+<el-dialog
+  title="提示"
+  :visible.sync="dialogVisible"
+  width="30%"
+  :before-close="handleClose"
+  append-to-body
+  @opened="onUserphotoOpen"
+>
+  <!-- Wrap the image or canvas element with a block element (container) -->
+  <div class="cropper-image-wrap">
+    <img :src="preViewImage" class="cropper-image" ref="preview-image">
+  </div>
+  <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="onUpdataPhoto">确 定</el-button>
+  </span>
+</el-dialog>
 </div>
 </template>
 
 <script>
 import { getUserProfile, changeUserAvatar } from '@/api/user'
+import 'cropperjs/dist/cropper.css'
+import Cropper from 'cropperjs'
 export default {
   name: 'accountIndex',
   props: {},
   components: {},
   data () {
     return {
-      form: {
-        name: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
-      },
       user: {
         id: '',
         name: '',
@@ -75,7 +85,9 @@ export default {
         email: '',
         mobile: ''
       },
-      preViewImage: ''
+      preViewImage: '',
+      dialogVisible: false,
+      cropper: ''
     }
   },
   computed: {},
@@ -97,11 +109,44 @@ export default {
       const file = this.$refs.file
       // console.log(file)// <input type="file" id="file" ref="file" hidden @change="onAvatarChange">
       const blobData = window.URL.createObjectURL(file.files[0])
-      console.log(blobData)
+      console.log(blobData) // 图片链接
       this.preViewImage = blobData
       this.$refs.file.value = ''
-      changeUserAvatar(blobData).then(res => {
-        console.log(res)
+      this.dialogVisible = true
+    },
+    handleClose (done) {
+      this.$confirm('确认关闭？')
+        .then(_ => {
+          done()
+        })
+        .catch(_ => {})
+    },
+    onUserphotoOpen () {
+      // 获取图片dom节点
+      const image = this.$refs['preview-image']
+      console.log(image)
+      if (this.cropper) {
+        // 解决copper选择同一张图片不会更新图片的问题
+        this.cropper.replace(this.preViewImage)
+        return
+      }
+      this.cropper = new Cropper(image, {
+        aspectRatio: 1,
+        dragMode: 'none'
+      })
+    },
+    onUpdataPhoto () {
+      this.cropper.getCroppedCanvas().toBlob((file) => {
+        const formData = new FormData()
+        // Pass the image file name as the third parameter if necessary.
+        // photo是接口参数名
+        formData.append('photo', file)
+        // changeUserAvatar是接口参数
+        changeUserAvatar(formData).then(res => {
+          console.log(res)
+          this.dialogVisible = false
+          this.onLoadUser()
+        })
       })
     }
   },
@@ -111,4 +156,10 @@ export default {
 </script>
 
 <style lang='less' scoped>
+.cropper-image {
+  display: block;
+
+  /* This rule is very important, please don't ignore this */
+  max-width: 100%;
+}
 </style>
