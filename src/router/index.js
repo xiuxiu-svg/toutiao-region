@@ -14,6 +14,9 @@ import imageIndex from '@/views/image'
 import commentIndex from '@/views/comment'
 // 引入账户组件
 import accountIndex from '@/views/account'
+// 粉丝管理页面组件
+import fansIndex from '@/views/fans'
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -46,20 +49,29 @@ const routes = [
         component: publishIndex,
         name: 'publishIndex'
       },
+      // 用户图片素材页面路由
       {
         path: '/image',
         component: imageIndex,
         name: 'imageIndex'
       },
+      // 评论管理页面路由规则
       {
         path: '/comment',
         component: commentIndex,
         name: 'commentIndex'
       },
+      // 用户个人设置页面路由
       {
         path: '/profile',
         component: accountIndex,
         name: 'accountIndex'
+      },
+      // 粉丝管理页面路由规则
+      {
+        path: '/fans',
+        component: fansIndex,
+        name: 'fansIndex'
       }
     ]
   }
