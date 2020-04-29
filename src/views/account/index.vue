@@ -12,24 +12,29 @@
 
     <el-row :gutter="50">
       <el-col :span="15">
-        <el-form ref="user" :model="user" label-width="80px">
+        <el-form ref="user" :model="user" label-width="100px" :rules="userRules">
           <el-form-item label="编号 :">
             {{ user.id }}
           </el-form-item>
           <el-form-item label="手机 :">
             {{ user.mobile }}
           </el-form-item>
-          <el-form-item label="媒体名称 :">
+          <el-form-item label="媒体名称:" prop="name">
             <el-input v-model="user.name"></el-input>
           </el-form-item>
-          <el-form-item label="媒体介绍 :">
+          <el-form-item label="媒体介绍:" prop="intro">
             <el-input type="textarea" v-model="user.intro"></el-input>
           </el-form-item>
-          <el-form-item label="邮箱 :">
+          <el-form-item label="邮箱:" prop="email">
             <el-input v-model="user.email"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="onSubmit">保存设置</el-button>
+            <el-button
+              type="primary"
+              @click="onUserSubmit"
+              v-loading="loading"
+              >
+              保存设置</el-button>
           </el-form-item>
         </el-form>
       </el-col>
@@ -68,7 +73,7 @@
 </template>
 
 <script>
-import { getUserProfile, changeUserAvatar } from '@/api/user'
+import { getUserProfile, changeUserAvatar, userSubmit } from '@/api/user'
 import 'cropperjs/dist/cropper.css'
 import Cropper from 'cropperjs'
 export default {
@@ -85,9 +90,32 @@ export default {
         email: '',
         mobile: ''
       },
+      userRules: {
+        name: [
+          { required: true, message: '请输入媒体名称', trigger: 'blur' }
+        ],
+        intro: [
+          { required: true, message: '请输入媒体介绍', trigger: 'blur' },
+          { min: 5, max: 7, message: '长度在 5 到 7 个字符', trigger: 'blur' }
+        ],
+        email: [
+          { required: true, message: '请输入媒体介绍', trigger: 'blur' },
+          {
+            validator: (rule, value, callback) => {
+              var reg = /\w+@[a-z0-9]+\.[a-z]{2,4}/
+              if (reg.exec(value)) {
+                callback()
+              } else {
+                callback(new Error('请输入正确邮箱格式'))
+              }
+            }
+          }
+        ]
+      },
       preViewImage: '',
       dialogVisible: false,
-      cropper: ''
+      cropper: '',
+      loading: false
     }
   },
   computed: {},
@@ -147,6 +175,17 @@ export default {
           this.dialogVisible = false
           this.onLoadUser()
         })
+      })
+    },
+    onUserSubmit () {
+      this.loading = true
+      userSubmit({
+        name: this.user.name,
+        intro: this.user.intro,
+        email: this.user.email
+      }).then(res => {
+        console.log(res)
+        this.loading = false
       })
     }
   },
