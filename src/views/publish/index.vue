@@ -46,6 +46,13 @@
               <el-radio :label="0">无图</el-radio>
               <el-radio :label="-1">自动</el-radio>
             </el-radio-group>
+            <!-- 使用引入的封面插件 -->
+            <template v-if="articles.cover.type > 0">
+              <upload-cover
+              v-for="cover in articles.cover.type"
+              :key="cover"
+              />
+            </template>
           </el-form-item>
           <!-- 选择频道 -->
           <el-form-item label="频道 :" prop="channel_id">
@@ -82,6 +89,7 @@ import {
   getArticle,
   updateArticle
 } from '@/api/article'
+import uploadCover from './components/upload-cover'
 import { uploadImage } from '@/api/image.js'
 // import { ElementTiptap } from 'element-tiptap'
 import {
@@ -112,7 +120,8 @@ export default {
   name: 'publishIndex',
   props: {},
   components: {
-    'el-tiptap': ElementTiptap
+    'el-tiptap': ElementTiptap,
+    uploadCover
   },
   data () {
     return {
@@ -120,7 +129,7 @@ export default {
         title: '表单验证1',
         content: '',
         cover: {
-          type: 0,
+          type: 1,
           images: []
         },
         channel_id: ''
