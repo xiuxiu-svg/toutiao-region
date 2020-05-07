@@ -1,3 +1,10 @@
 module.exports = {
-  publicPath: './'
+  publicPath: '/',
+  configureWebpack: {
+    externals: {
+      'element-ui': 'ELEMENT',
+      vue: 'Vue',
+      echarts: 'echarts'
+    }
+  }
 }

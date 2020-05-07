@@ -1,21 +1,14 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Login from '@/views/login'
-import Layout from '@/views/layout'
-import Home from '@/views/Home/home'
-
-// 引入发表文章组件
-import publishIndex from '@/views/publish'
-// 引入文章管理组件
-import ArticleIndex from '@/views/article'
-// 引入用户素材组件
-import imageIndex from '@/views/image'
-//  引入评论组件
-import commentIndex from '@/views/comment'
-// 引入账户组件
-import accountIndex from '@/views/account'
-// 粉丝管理页面组件
-import fansIndex from '@/views/fans'
+const Login = () => import(/* webpackChunkName: "group-foo" */ '@/views/login')
+const Layout = () => import('@/views/layout')
+const Home = () => import(/* webpackChunkName: "group-foo" */ '@/views/Home/home')
+const publishIndex = () => import('@/views/publish')
+const ArticleIndex = () => import(/* webpackChunkName: "group-foo" */ '@/views/article')
+const imageIndex = () => import('@/views/image')
+const commentIndex = () => import('@/views/comment')
+const accountIndex = () => import('@/views/account')
+const fansIndex = () => import('@/views/fans')
 
 Vue.use(VueRouter)
 

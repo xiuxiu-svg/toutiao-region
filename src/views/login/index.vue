@@ -72,11 +72,12 @@ export default {
         this.login()
       })
     },
-    login () {
+    async login () {
       // 获取表单数据（根据接口要求绑定数据）
       // const user = this.user
       this.loginLoding = true
-      loginTo(this.user).then(res => {
+      try {
+        const res = await loginTo(this.user)
         // 简单的提示信息
         this.$message({
           message: '登录成功',
@@ -93,11 +94,11 @@ export default {
             name: 'home'
           }
         )
-      }).catch(err => {
+      } catch (err) {
         console.log(err)
         this.$message.error('登录失败')
         this.loginLoding = false
-      })
+      }
     }
   }
 }
